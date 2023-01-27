@@ -18,12 +18,6 @@ import (
 )
 
 type (
-	RawABIResponse struct {
-		Status  *string `json:"status"`
-		Message *string `json:"message"`
-		Result  *string `json:"result"`
-	}
-
 	TransactionData struct {
 		Hash string
 		ChainId *big.Int
