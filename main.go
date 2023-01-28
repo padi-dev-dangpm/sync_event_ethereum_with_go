@@ -15,6 +15,7 @@ import (
     "github.com/ethereum/go-ethereum/accounts/abi"
 	nfts "try-ethereum/contracts/transferNFT"
     txUtils "try-ethereum/transactions"
+    helper "try-ethereum/utils"
 )
 
 
@@ -36,7 +37,7 @@ func main() {
         log.Fatal(err)
     }
 
-    blockNumber := big.NewInt(int64(26416514))
+    blockNumber := big.NewInt(int64(26750437))
     block, err := client.BlockByNumber(context.Background(), blockNumber)
     if err != nil {
         log.Fatal(err)
@@ -63,11 +64,13 @@ func main() {
     var wg sync.WaitGroup
     for _, transaction := range transactions {
         wg.Add(1)
-        go func(transaction *types.Transaction){
+        go func(transaction *types.Transaction, client *ethclient.Client){
             defer wg.Done()
             data := txUtils.ParseTransactionBaseInfo(client,transaction)
-            fmt.Println(txUtils.DecodeTransferLog(data.Logs))
-        }(transaction)
+            if (helper.IsERC721Contract(common.HexToAddress(data.To), client) == true){
+                fmt.Println(txUtils.DecodeTransferLog(data.Logs))
+            }
+        }(transaction, client)
     }
     wg.Wait()
 

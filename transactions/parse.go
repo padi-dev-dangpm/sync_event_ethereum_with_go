@@ -90,7 +90,7 @@ func DecodeTransferLog(logs []*types.Log) []LogTransfer {
 	// contractAbi, err := abi.JSON(strings.NewReader(string(transferAbi.ContractsABI)))
     
 	for _, vLog := range logs {
-		if strings.Compare(vLog.Topics[0].Hex(),transferEventHash.Hex()) == 0 && len(vLog.Topics) >= 3 {
+		if strings.Compare(vLog.Topics[0].Hex(),transferEventHash.Hex()) == 0 && len(vLog.Topics) >= 4 {
 			func () {
 				// err = contractAbi.UnpackIntoInterface(&transferEvent, "Transfer", vLog.Data)
 				// if err != nil {
@@ -102,7 +102,6 @@ func DecodeTransferLog(logs []*types.Log) []LogTransfer {
 
 				transferEvents = append(transferEvents, transferEvent)
 			}()
-
 		}
 	}
 
