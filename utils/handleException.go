@@ -1,28 +1,28 @@
 package utils
 
 type TryCatch struct {
-    Try     func()
-    Catch   func(Exception)
-    Finally func()
+	Try     func()
+	Catch   func(Exception)
+	Finally func()
 }
- 
+
 type Exception interface{}
- 
+
 func Throw(up Exception) {
-    panic(up)
+	panic(up)
 }
- 
+
 func (tcf TryCatch) Do() {
-    if tcf.Finally != nil {
- 
-        defer tcf.Finally()
-    }
-    if tcf.Catch != nil {
-        defer func() {
-            if r := recover(); r != nil {
-                tcf.Catch(r)
-            }
-        }()
-    }
-    tcf.Try()
+	if tcf.Finally != nil {
+
+		defer tcf.Finally()
+	}
+	if tcf.Catch != nil {
+		defer func() {
+			if r := recover(); r != nil {
+				tcf.Catch(r)
+			}
+		}()
+	}
+	tcf.Try()
 }
