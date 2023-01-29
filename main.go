@@ -38,10 +38,17 @@ func queryAndDecodeTransactionByBlock(client *ethclient.Client, blockNum int) {
 	transactions := block.Transactions()
 
 	// for _, transaction := range transactions {
-	//     func(transaction *types.Transaction){
-	//         data := txUtils.ParseTransactionBaseInfo(client,transaction)
-	//         fmt.Println(txUtils.DecodeTransferLog(data.Logs))
-	//     }(transaction)
+	// 	func(transaction *types.Transaction, client *ethclient.Client) {
+	// 		data := txUtils.ParseTransactionBaseInfo(client, transaction)
+	// 		contractAddress := data.To
+	// 		switch {
+	// 		case helper.IsERC721Contract(common.HexToAddress(contractAddress), client) == true:
+	// 			fmt.Println(txUtils.DecodeTransferLog(data.Logs))
+	// 		case helper.IsERC1155Contract(common.HexToAddress(contractAddress), client) == true:
+	// 			fmt.Println(txUtils.DecodeTransferSingleLog(data.Logs))
+	// 			fmt.Println(txUtils.DecodeTransferBatchLog(data.Logs))
+	// 		}
+	// 	}(transaction, client)
 	// }
 
 	var wg sync.WaitGroup
@@ -74,9 +81,15 @@ func main() {
 
 	defer timeTrack(time.Now(), "Transaction Run")
 
+	var wg sync.WaitGroup
 	for i := 26767269; i <= 26767279; i++ {
-		queryAndDecodeTransactionByBlock(client, i)
+		wg.Add(1)
+		go func(client *ethclient.Client, i int) {
+			defer wg.Done()
+			queryAndDecodeTransactionByBlock(client, i)
+		}(client, i)
 	}
+	wg.Wait()
 
 	fmt.Println("Done")
 }
